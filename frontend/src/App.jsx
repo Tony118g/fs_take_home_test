@@ -32,6 +32,18 @@ function App() {
     }
   };
 
+
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`${API_BASE}/user`, { params: { user_id: id } });
+      fetchUsers();
+      showTempMessage("User deleted successfully!");
+    } catch (error) {
+      showTempMessage("Failed to delete user.");
+    }
+  };
+
+
   useEffect(() => {
     if (showUsers) {
       fetchUsers();
@@ -95,7 +107,7 @@ function App() {
       )}
 
       {showUsers && (
-        <UserList users={users}  />
+        <UserList users={users} onDelete={deleteUser} />
       )}
     </div>
   );
