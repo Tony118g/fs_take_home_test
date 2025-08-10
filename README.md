@@ -1,5 +1,7 @@
 # FS Take Home Test
 
+*This project is for educational purposes only.*
+
 This repository hosts the code for a TCM test assignment. The requirements are outlined [here](assignment.md).
 
 ---
@@ -81,3 +83,10 @@ After saving edits, a success message appears.
 - Success message confirms deletion.
 
 ![Delete Success Message](readme-images/delete-success-msg.png)
+
+
+## Disclaimer
+
+Some parts of this project, including formatting and code comments, were assisted by ChatGPT.
+
+This project is intended solely for educational purposes and should not be used in production without appropriate review and licensing considerations.
