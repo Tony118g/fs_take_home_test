@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserForm from "./components/UserForm";
+import UserList from "./components/UserList";
+
 const API_BASE = "http://localhost:8000";
 
 function App() {
@@ -69,6 +71,15 @@ function App() {
         </div>
       )}
 
+      
+      <button
+        onClick={() => setShowUsers((prev) => !prev)}
+        style={showUsers ? buttonCancelStyle : buttonStyle}
+      >
+        {showUsers ? "Hide Users" : "Show Users"}
+      </button>
+     
+
       {message && (
         <div
           style={{
@@ -81,6 +92,10 @@ function App() {
         >
           {message}
         </div>
+      )}
+
+      {showUsers && (
+        <UserList users={users}  />
       )}
     </div>
   );
