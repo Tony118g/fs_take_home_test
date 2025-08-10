@@ -10,6 +10,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
+class UserUpdate(BaseModel):
+    firstname: Optional[str] = None
+    lastname: Optional[str] = None
+    date_of_birth: Optional[date] = None
+
 class User(UserBase):
     id: int
     age: int

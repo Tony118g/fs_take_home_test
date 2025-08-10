@@ -11,7 +11,7 @@ app = FastAPI()
 # CORS for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with specific origin in prod
+    allow_origins=["*"],  # Replace with specific origin in production
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -31,15 +31,15 @@ def read_users(db: Session = Depends(get_db)):
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db, user)
 
-@app.delete("/user")
+@app.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.delete_user(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return {"detail": "User deleted"}
 
-@app.put("/user/{user_id}", response_model=schemas.User)
-def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
+@app.put("/users/{user_id}", response_model=schemas.User)
+def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)):
     updated_user = crud.update_user(db, user_id, user)
     if not updated_user:
         raise HTTPException(status_code=404, detail="User not found")

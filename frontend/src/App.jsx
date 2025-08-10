@@ -32,6 +32,15 @@ function App() {
     }
   };
 
+  const updateUser = async (id, userData) => {
+    try {
+      await axios.put(`${API_BASE}/users/${id}`, userData);
+      if (showUsers) fetchUsers();
+      showTempMessage("User updated successfully!");
+    } catch (error) {
+      showTempMessage("Failed to update user.");
+    }
+  };
 
   const deleteUser = async (id) => {
     try {
@@ -43,13 +52,13 @@ function App() {
     }
   };
 
-
   useEffect(() => {
     if (showUsers) {
       fetchUsers();
     }
   }, [showUsers]);
 
+  // Basic button styles
   const buttonStyle = {
     padding: "0.5rem 1rem",
     marginRight: "1rem",
@@ -83,14 +92,13 @@ function App() {
         </div>
       )}
 
-      
+
       <button
         onClick={() => setShowUsers((prev) => !prev)}
         style={showUsers ? buttonCancelStyle : buttonStyle}
       >
         {showUsers ? "Hide Users" : "Show Users"}
       </button>
-     
 
       {message && (
         <div
@@ -107,7 +115,7 @@ function App() {
       )}
 
       {showUsers && (
-        <UserList users={users} onDelete={deleteUser} />
+        <UserList users={users} onDelete={deleteUser} onUpdate={updateUser} />
       )}
     </div>
   );

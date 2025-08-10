@@ -30,3 +30,19 @@ def delete_user(db: Session, user_id: int):
         db.commit()
     return user
 
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    user = db.query(models.User).get(user_id)
+    if not user:
+        return None
+
+    if user_update.firstname is not None:
+        user.firstname = user_update.firstname
+    if user_update.lastname is not None:
+        user.lastname = user_update.lastname
+    if user_update.date_of_birth is not None:
+        user.date_of_birth = user_update.date_of_birth
+        user.age = calculate_age(user_update.date_of_birth)
+
+    db.commit()
+    db.refresh(user)
+    return user
