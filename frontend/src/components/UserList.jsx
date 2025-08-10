@@ -1,29 +1,38 @@
 import React, { useState } from "react";
 
 export default function UserList({ users, onDelete, onUpdate }) {
+  // Track which user is currently being edited (by id)
   const [editingUserId, setEditingUserId] = useState(null);
+
+  // Form state used for editing a user
   const [editForm, setEditForm] = useState({
     firstname: "",
     lastname: "",
     date_of_birth: "",
   });
+
+  // Validation error messages for each field during edit
   const [errors, setErrors] = useState({
     firstname: "",
     lastname: "",
     date_of_birth: "",
   });
+
+  // Track which fields have been touched (to show errors only after blur)
   const [touched, setTouched] = useState({
     firstname: false,
     lastname: false,
     date_of_birth: false,
   });
 
+  // Utility: Filter input to only letters (used for name validation)
   const filterLettersOnly = (value) => {
     return value.replace(/[^a-zA-Z]/g, "");
   };
 
   const maxLength = 50;
 
+  // Validate the entire edit form before saving
   const validate = () => {
     return (
       editForm.firstname.trim() !== "" &&
@@ -35,6 +44,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
     );
   };
 
+  // When clicking 'Edit', populate the form with the selected user's data
   const handleEditClick = (user) => {
     setEditingUserId(user.id);
     setEditForm({
@@ -46,13 +56,14 @@ export default function UserList({ users, onDelete, onUpdate }) {
     setTouched({ firstname: false, lastname: false, date_of_birth: false });
   };
 
+  // Handle changes in the edit form inputs, including validation
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let newValue = value;
     let newErrors = { ...errors };
 
     if (name === "firstname" || name === "lastname") {
-      // Filter letters only but keep user's raw input for UX
+      // Check for non-letter characters and max length
       const filtered = filterLettersOnly(value);
       if (value !== filtered) {
         newErrors[name] = "Only letters allowed.";
@@ -65,6 +76,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
     }
 
     if (name === "date_of_birth") {
+      // Date of birth cannot be in the future
       if (new Date(value) > new Date()) {
         newErrors.date_of_birth = "Date of birth cannot be in the future.";
       } else {
@@ -72,6 +84,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
       }
     }
 
+    // Update form values and error states
     setEditForm({
       ...editForm,
       [name]: newValue,
@@ -79,23 +92,28 @@ export default function UserList({ users, onDelete, onUpdate }) {
     setErrors(newErrors);
   };
 
+  // Mark a field as touched on blur to trigger validation message display
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
+  // Save changes and call parent's onUpdate prop if valid
   const handleSaveClick = () => {
     setTouched({ firstname: true, lastname: true, date_of_birth: true });
     if (!validate()) return;
     onUpdate(editingUserId, editForm);
-    setEditingUserId(null);
+    setEditingUserId(null); // Exit edit mode
   };
 
+  // Cancel editing without saving changes
   const handleCancelClick = () => {
     setEditingUserId(null);
   };
 
+  // Show message if no users
   if (users.length === 0) return <p>No users found.</p>;
 
+  // Inline styles for inputs and error messages
   const inputStyle = {
     marginRight: "0.5rem",
     padding: "0.25rem",
@@ -115,6 +133,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
         <li key={user.id} style={{ marginBottom: "0.75rem" }}>
           {editingUserId === user.id ? (
             <>
+              {/* Editable input fields */}
               <div style={{ display: "inline-block", verticalAlign: "top" }}>
                 <input
                   type="text"
@@ -126,6 +145,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
                   maxLength={maxLength}
                   style={inputStyle}
                 />
+                {/* Validation error message */}
                 {touched.firstname && errors.firstname && (
                   <div style={errorStyle}>{errors.firstname}</div>
                 )}
@@ -162,6 +182,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
                 )}
               </div>
 
+              {/* Save and Cancel buttons */}
               <button
                 onClick={handleSaveClick}
                 style={{ marginLeft: "0.5rem" }}
@@ -175,6 +196,7 @@ export default function UserList({ users, onDelete, onUpdate }) {
             </>
           ) : (
             <>
+              {/* Display user info when not editing */}
               {user.firstname} {user.lastname} ({user.age} years old) — {user.date_of_birth}
               <button onClick={() => onDelete(user.id)} style={{ marginLeft: "1rem" }}>
                 Delete

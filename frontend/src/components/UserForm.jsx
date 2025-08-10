@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 
 export default function UserForm({ onSubmit, editingUser, onCancel }) {
+  // State to hold form input values
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+
+  // State to hold letter validation error messages for firstname and lastname
   const [letterError, setLetterError] = useState({ firstname: "", lastname: "" });
+
+  // State to track which fields have been touched (for showing validation messages)
   const [touched, setTouched] = useState({ firstname: false, lastname: false, dateOfBirth: false });
 
+  // Populate form inputs when editing an existing user
   useEffect(() => {
     if (editingUser) {
       setFirstname(editingUser.firstname);
@@ -17,10 +23,12 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
     }
   }, [editingUser]);
 
+  // Utility function to remove any non-letter characters from input
   const filterLettersOnly = (value) => {
     return value.replace(/[^a-zA-Z]/g, "");
   };
 
+  // Utility to capitalize first letter of each word, lowercase the rest
   const capitalizeName = (name) => {
     return name
       .toLowerCase()
@@ -30,6 +38,7 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
       .join(" ");
   };
 
+  // Handler for firstname input change with validation
   const handleFirstnameChange = (e) => {
     const raw = e.target.value;
     const filtered = filterLettersOnly(raw);
@@ -40,6 +49,7 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
     }));
   };
 
+  // Handler for lastname input change with validation
   const handleLastnameChange = (e) => {
     const raw = e.target.value;
     const filtered = filterLettersOnly(raw);
@@ -50,36 +60,44 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
     }));
   };
 
+  // Handler for date of birth input change
   const handleDateChange = (e) => {
     setDateOfBirth(e.target.value);
   };
 
+  // Mark field as touched (called on blur)
   const handleBlur = (field) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
+  // Validate the entire form before submission
   const validate = () => {
     return (
-      firstname.trim() !== "" &&
-      lastname.trim() !== "" &&
-      dateOfBirth !== "" &&
-      !letterError.firstname &&
-      !letterError.lastname
+      firstname.trim() !== "" &&           // firstname not empty
+      lastname.trim() !== "" &&            // lastname not empty
+      dateOfBirth !== "" &&                // date of birth selected
+      !letterError.firstname &&            // no firstname letter errors
+      !letterError.lastname                // no lastname letter errors
     );
   };
 
+  // Submit handler for form
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Mark all fields as touched to show errors if any
     setTouched({ firstname: true, lastname: true, dateOfBirth: true });
 
+    // Prevent submission if validation fails
     if (!validate()) return;
 
+    // Call parent onSubmit prop with cleaned and capitalized data
     onSubmit({
       firstname: capitalizeName(firstname.trim()),
       lastname: capitalizeName(lastname.trim()),
       date_of_birth: dateOfBirth,
     });
 
+    // Reset form if creating a new user (not editing)
     if (!editingUser) {
       setFirstname("");
       setLastname("");
@@ -89,6 +107,7 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
     }
   };
 
+  // Inline styles for form elements and error messages
   const formStyle = {
     maxWidth: "400px",
     margin: "0 auto",
@@ -152,6 +171,7 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
           title="Only letters allowed."
           style={inputStyle}
         />
+        {/* Validation messages for firstname */}
         {touched.firstname && firstname.trim() === "" && (
           <div style={errorStyle}>This field is required.</div>
         )}
@@ -173,6 +193,7 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
           title="Only letters allowed."
           style={inputStyle}
         />
+        {/* Validation messages for lastname */}
         {touched.lastname && lastname.trim() === "" && (
           <div style={errorStyle}>This field is required.</div>
         )}
@@ -187,20 +208,24 @@ export default function UserForm({ onSubmit, editingUser, onCancel }) {
           type="date"
           value={dateOfBirth}
           onChange={handleDateChange}
+          // Prevent selecting a future date
           max={new Date().toISOString().split("T")[0]}
           required
           onBlur={() => handleBlur("dateOfBirth")}
           style={inputStyle}
         />
+        {/* Validation message for date of birth */}
         {touched.dateOfBirth && dateOfBirth === "" && (
           <div style={errorStyle}>This field is required.</div>
         )}
       </div>
 
+      {/* Submit button text changes based on editing mode */}
       <button type="submit" style={buttonStyle}>
         {editingUser ? "Save Changes" : "Create User"}
       </button>
 
+      {/* Show cancel button only when editing */}
       {editingUser && (
         <button
           type="button"
