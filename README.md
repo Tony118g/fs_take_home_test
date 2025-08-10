@@ -84,6 +84,22 @@ After saving edits, a success message appears.
 
 ![Delete Success Message](readme-images/delete-success-msg.png)
 
+## How to Run
+
+### Prerequisites
+
+- Docker installed on your machine ([Get Docker](https://www.docker.com/get-started))
+- Docker Compose installed (usually included with Docker Desktop) ([Install Docker Compose](https://docs.docker.com/compose/install/))
+
+### Starting the Application
+
+Clone the repository and navigate to the project folder via:
+
+git clone repo-url
+
+cd repo-folder
+
+Then run the command: "docker compose up" and navigate to the local url returned in the response.
 
 ## Disclaimer
 
